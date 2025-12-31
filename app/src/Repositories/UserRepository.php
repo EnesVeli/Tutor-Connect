@@ -23,4 +23,13 @@ class UserRepository extends Repository
         $stmt = $this->db->prepare("INSERT INTO users (email, password, first_name, last_name, role) VALUES (:email, :password, :first_name, :last_name, :role)");
         return $stmt->execute(['email' => $email, 'password' => $hashedPassword, 'first_name' => $firstName, 'last_name' => $lastName, 'role' => $role]);
     }
+
+    public function findById(int $id): ?User
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
+        $user = $stmt->fetch();
+        return $user ?: null;
+    }
 }

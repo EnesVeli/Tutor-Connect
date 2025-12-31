@@ -49,6 +49,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="card text-center h-100">
+                                    <div class="card-body">
+                                        <h4>My Profile</h4>
+                                        <p>Update your personal details.</p>
+                                        <a href="/student/profile" class="btn btn-primary">Edit Profile</a>
+                                    </div>
+                                </div>
+                            </div>
 
                             <?php elseif ($role === 'tutor'): ?>
                             <div class="col-md-4">

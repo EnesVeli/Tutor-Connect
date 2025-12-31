@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Turn on error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -11,13 +10,26 @@ session_start();
 use App\Controllers\AuthController;
 use FastRoute\RouteCollector;
 use App\Controllers\HomeController;
+use App\Controllers\AdminController;
+use App\Controllers\TutorController;
+use App\Controllers\StudentController;
+use App\Controllers\BookingController;
+use App\Controllers\StudentProfileController;
 
 $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
-    // Routes
     $r->addRoute(['GET', 'POST'], '/login', [AuthController::class, 'login']);
     $r->addRoute(['GET', 'POST'], '/register', [AuthController::class, 'register']);
     $r->addRoute('GET', '/logout', [AuthController::class, 'logout']);
     $r->addRoute('GET', '/', [HomeController::class, 'index']);
+    $r->addRoute('GET', '/admin/users', [AdminController::class, 'users']);
+    $r->addRoute(['GET', 'POST'], '/profile', [TutorController::class, 'edit']);
+    $r->addRoute('GET', '/tutors', [StudentController::class, 'index']);
+    $r->addRoute('GET', '/book', [BookingController::class, 'create']);
+    $r->addRoute('GET', '/bookings', [BookingController::class, 'index']);
+    $r->addRoute('POST', '/booking/update', [BookingController::class, 'update']);
+    $r->addRoute('POST', '/book/payment', [BookingController::class, 'process']);
+    $r->addRoute('POST', '/book/confirm', [BookingController::class, 'store']);  
+    $r->addRoute(['GET', 'POST'], '/student/profile', [StudentProfileController::class, 'edit']);
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
