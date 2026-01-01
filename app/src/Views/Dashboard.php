@@ -1,112 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php 
+$title = 'Dashboard - Tutor Connect';
+require __DIR__ . '/Partials/header.php'; 
+require __DIR__ . '/Partials/navbar.php'; 
+?>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Tutor Connect</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="/">Tutor Connect</a>
-            <div class="d-flex">
-                <span class="navbar-text text-white me-3">
-                    Welcome, <?= htmlspecialchars($name) ?> (<?= ucfirst($role) ?>)
-                </span>
-                <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="card-title">My Dashboard</h2>
-                        <p class="lead">Select an option below to get started.</p>
-
-                        <div class="row mt-4">
-                            <?php if ($role === 'student'): ?>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm p-4">
+                <div class="card-body">
+                    <h2 class="card-title text-primary">My Dashboard</h2>
+                    <p class="lead text-muted">Select an option below to get started.</p>
+                    
+                    <div class="row mt-4 g-4">
+                        <?php if ($role === 'student'): ?>
                             <div class="col-md-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body text-center">
                                         <h4>Find a Tutor</h4>
                                         <p>Search by subject and book a lesson.</p>
-                                        <a href="/tutors" class="btn btn-primary">Search Tutors</a>
+                                        <a href="/tutors" class="btn btn-primary w-100">Search Tutors</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body text-center">
                                         <h4>My Bookings</h4>
                                         <p>View your upcoming lessons.</p>
-                                        <a href="/bookings" class="btn btn-outline-primary">View Schedule</a>
+                                        <a href="/bookings" class="btn btn-outline-primary w-100">View Schedule</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body text-center">
                                         <h4>My Profile</h4>
                                         <p>Update your personal details.</p>
-                                        <a href="/student/profile" class="btn btn-primary">Edit Profile</a>
+                                        <a href="/student/profile" class="btn btn-outline-secondary w-100">Edit Profile</a>
                                     </div>
                                 </div>
                             </div>
 
-                            <?php elseif ($role === 'tutor'): ?>
+                        <?php elseif ($role === 'tutor'): ?>
                             <div class="col-md-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body text-center">
                                         <h4>My Profile</h4>
                                         <p>Update your bio, subjects, and hourly rate.</p>
-                                        <a href="/profile" class="btn btn-primary">Edit Profile</a>
+                                        <a href="/profile" class="btn btn-primary w-100">Edit Profile</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card text-center h-100">
-                                    <div class="card-body">
+                                <div class="card h-100 bg-light border-0">
+                                    <div class="card-body text-center">
                                         <h4>Upcoming Lessons</h4>
                                         <p>See which students have booked you.</p>
-                                        <a href="/bookings" class="btn btn-outline-primary">View Schedule</a>
+                                        <a href="/bookings" class="btn btn-outline-primary w-100">View Schedule</a>
                                     </div>
                                 </div>
                             </div>
 
-                            <?php elseif ($role === 'admin'): ?>
+                        <?php elseif ($role === 'admin'): ?>
                             <div class="col-md-4">
-                                <div class="card text-center h-100 border-danger">
-                                    <div class="card-body">
+                                <div class="card h-100 border-danger border-2">
+                                    <div class="card-body text-center">
                                         <h4 class="text-danger">Manage Users</h4>
                                         <p>View, edit, or delete users.</p>
-                                        <a href="/admin/users" class="btn btn-danger">User Management</a>
+                                        <a href="/admin/users" class="btn btn-danger w-100">User Management</a>
                                     </div>
                                 </div>
                             </div>
+                            
                             <div class="col-md-4">
-                                <div class="card text-center h-100 border-danger">
-                                    <div class="card-body">
-                                        <h4 class="text-danger">System Stats</h4>
-                                        <p>View platform activity.</p>
-                                        <a href="/admin/stats" class="btn btn-outline-danger">View Reports</a>
+                                <div class="card h-100 border-info border-2">
+                                    <div class="card-body text-center">
+                                        <h4 class="text-info">Platform Stats</h4>
+                                        <p>View bookings and earnings reports.</p>
+                                        <a href="/admin/statistics" class="btn btn-info text-white w-100">View Statistics</a>
                                     </div>
                                 </div>
                             </div>
-                            <?php endif; ?>
+                        <?php endif; ?>
 
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-</body>
-
-</html>
+<?php require __DIR__ . '/Partials/footer.php'; ?>

@@ -2,20 +2,61 @@
 
 namespace App\Controllers;
 
-use App\Repositories\UserRepository;
+use App\Framework\Controller;
+use App\Services\AdminService;
 
-class AdminController
+class AdminController extends Controller
 {
+    private AdminService $adminService;
+    
+    public function __construct()
+    {
+        $this->adminService = new AdminService();
+    }
+
     public function users()
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-            header('Location: /login');
-            exit;
+        $this->requireAuth('admin');
+        $users = $this->adminService->getAllUsers();
+        $this->view('Admin/Users', ['users' => $users]);
+    }
+
+    public function editUser()
+    {
+        $this->requireAuth('admin');
+        $userId = $_GET['id'] ?? null;
+
+        if (!$userId) $this->redirect('/admin/users');
+
+        $user = $this->adminService->getUser((int)$userId);
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $fname = $_POST['first_name'];
+            $lname = $_POST['last_name'];
+            $email = $_POST['email'];
+            
+            if ($this->adminService->updateUser($user->id, $fname, $lname, $email)) {
+                $this->redirect('/admin/users');
+            }
         }
 
-        $userRepo = new UserRepository();
-        $users = $userRepo->findAll();
+        $this->view('Admin/EditUser', ['user' => $user]);
+    }
 
-        require __DIR__ . '/../Views/Dashboard.php';
+    public function deleteUser()
+    {
+        $this->requireAuth('admin');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userId = $_POST['user_id'] ?? 0;
+            $this->adminService->deleteUser((int)$userId);
+            $this->redirect('/admin/users');
+        }
+    }
+
+    public function statistics()
+    {
+        $this->requireAuth('admin');
+        $stats = $this->adminService->getDashboardStats();
+        $this->view('Admin/Statistics', ['stats' => $stats]);
     }
 }

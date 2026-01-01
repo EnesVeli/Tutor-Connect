@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Student Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<?php 
+$title = 'Edit Profile';
+require __DIR__ . '/../partials/header.php';
+require __DIR__ . '/../partials/navbar.php';
+?>
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2>My Profile</h2>
-                <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="/" class="btn btn-secondary">Back</a>
             </div>
 
             <div class="card shadow">
@@ -22,12 +19,28 @@
                     <?php endif; ?>
 
                     <form method="POST" action="/student/profile">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" value="<?= htmlspecialchars($user->first_name) ?>" required>
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" value="<?= htmlspecialchars($user->last_name) ?>" required>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Date of Birth</label>
                             <input type="date" name="date_of_birth" class="form-control" 
                                    value="<?= htmlspecialchars($profile->date_of_birth ?? '') ?>" required>
-                            <div class="form-text">We need this to show your age to tutors.</div>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bio / About Me</label>
+                            <textarea name="bio" class="form-control" rows="3" placeholder="Tell tutors a bit about yourself..."><?= htmlspecialchars($profile->bio ?? '') ?></textarea>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100">Save Profile</button>
                     </form>
                 </div>
@@ -35,5 +48,5 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+
+<?php require __DIR__ . '/../partials/footer.php'; ?>

@@ -2,47 +2,40 @@
 
 namespace App\Controllers;
 
-use App\Repositories\UserRepository;
+use App\Framework\Controller; // Inherit from Base Controller
+use App\Services\AuthService; // Use the new Service
 
-class AuthController
+class AuthController extends Controller
 {
-    public function index()
+    private AuthService $authService;
+
+    public function __construct()
     {
-        if (isset($_SESSION['user_id'])) {
-            echo "<h1>Login Successful!</h1>";
-            echo "<p>Welcome, " . htmlspecialchars($_SESSION['user_name']) . "!</p>";
-            echo "<a href='/logout'>Logout</a>";
-            exit;
-        }
-        header('Location: /login');
-        exit;
+        $this->authService = new AuthService();
     }
 
     public function login()
     {
         $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
-            $userRepo = new UserRepository();
-            $user = $userRepo->findByEmail($email);
 
-            if ($user && password_verify($password, $user->password)) {
-                $_SESSION['user_id'] = $user->id;
-                $_SESSION['user_name'] = $user->first_name;
-                $_SESSION['user_role'] = $user->role;
-                header('Location: /');
-                exit;
-            } else {
-                $error = "Invalid email or password.";
+            $error = $this->authService->attemptLogin($email, $password);
+
+            if ($error === null) {
+                $this->redirect('/');
             }
         }
-        require __DIR__ . '/../Views/Login.php';
+
+        $this->view('Login', ['error' => $error]);
     }
 
     public function register()
     {
         $error = null;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstName = $_POST['first_name'] ?? '';
             $lastName = $_POST['last_name'] ?? '';
@@ -50,20 +43,19 @@ class AuthController
             $password = $_POST['password'] ?? '';
             $role = $_POST['role'] ?? 'student';
 
-            $userRepo = new UserRepository();
-            if ($userRepo->findByEmail($email)) {
-                $error = "Email already registered.";
-            } else {
-                if ($userRepo->create($email, $password, $firstName, $lastName, $role)) {
-                    header('Location: /login');
-                    exit;
-                } else {
-                    $error = "Registration failed.";
-                }
+            $error = $this->authService->registerUser($email, $password, $firstName, $lastName, $role);
+
+            if ($error === null) {
+                $this->redirect('/login'); // Success!
             }
         }
-        require __DIR__ . '/../Views/Register.php';
+
+        $this->view('Register', ['error' => $error]);
     }
 
-    public function logout() { session_destroy(); header('Location: /login'); exit; }
+    public function logout()
+    {
+        $this->authService->logout();
+        $this->redirect('/login');
+    }
 }

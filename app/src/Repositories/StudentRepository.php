@@ -17,16 +17,16 @@ class StudentRepository extends Repository
         return $profile ?: null;
     }
 
-    public function save(int $userId, string $dob): bool
+    public function save(int $userId, string $dob, string $bio): bool
     {
         $existing = $this->findByUserId($userId);
 
         if ($existing) {
-            $stmt = $this->db->prepare("UPDATE student_profiles SET date_of_birth = :dob WHERE user_id = :uid");
+            $stmt = $this->db->prepare("UPDATE student_profiles SET date_of_birth = :dob, bio = :bio WHERE user_id = :uid");
         } else {
-            $stmt = $this->db->prepare("INSERT INTO student_profiles (user_id, date_of_birth) VALUES (:uid, :dob)");
+            $stmt = $this->db->prepare("INSERT INTO student_profiles (user_id, date_of_birth, bio) VALUES (:uid, :dob, :bio)");
         }
 
-        return $stmt->execute(['uid' => $userId, 'dob' => $dob]);
+        return $stmt->execute(['uid' => $userId, 'dob' => $dob, 'bio' => $bio]);
     }
 }

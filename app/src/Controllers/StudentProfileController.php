@@ -2,30 +2,42 @@
 
 namespace App\Controllers;
 
+use App\Framework\Controller;
 use App\Repositories\StudentRepository;
+use App\Repositories\UserRepository;
 
-class StudentProfileController
+class StudentProfileController extends Controller
 {
     public function edit()
     {
-        //  check
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'student') {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth('student');
 
-        $repo = new StudentRepository();
-        $profile = $repo->findByUserId($_SESSION['user_id']);
+        $studentRepo = new StudentRepository();
+        $userRepo = new UserRepository();
+        
+        $profile = $studentRepo->findByUserId($_SESSION['user_id']);
+        $user = $userRepo->findById($_SESSION['user_id']);
+        
         $message = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dob = $_POST['date_of_birth'];
-            if ($repo->save($_SESSION['user_id'], $dob)) {
-                $message = "Profile saved!";
-                $profile = $repo->findByUserId($_SESSION['user_id']); 
-            }
+            $bio = $_POST['bio'];
+            $studentRepo->save($_SESSION['user_id'], $dob, $bio);
+
+            $fname = $_POST['first_name'];
+            $lname = $_POST['last_name'];
+            $userRepo->update($_SESSION['user_id'], $fname, $lname, $user->email);
+
+            $message = "Profile saved!";
+            $profile = $studentRepo->findByUserId($_SESSION['user_id']);
+            $user = $userRepo->findById($_SESSION['user_id']);
         }
 
-        require __DIR__ . '/../Views/Student/Profile.php';
+        $this->view('Student/Profile', [
+            'profile' => $profile,
+            'user' => $user,
+            'message' => $message
+        ]);
     }
 }

@@ -16,12 +16,14 @@ use App\Controllers\StudentController;
 use App\Controllers\BookingController;
 use App\Controllers\StudentProfileController;
 
+
 $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute(['GET', 'POST'], '/login', [AuthController::class, 'login']);
     $r->addRoute(['GET', 'POST'], '/register', [AuthController::class, 'register']);
     $r->addRoute('GET', '/logout', [AuthController::class, 'logout']);
     $r->addRoute('GET', '/', [HomeController::class, 'index']);
     $r->addRoute('GET', '/admin/users', [AdminController::class, 'users']);
+    $r->addRoute('POST', '/admin/users/delete', [AdminController::class, 'deleteUser']);
     $r->addRoute(['GET', 'POST'], '/profile', [TutorController::class, 'edit']);
     $r->addRoute('GET', '/tutors', [StudentController::class, 'index']);
     $r->addRoute('GET', '/book', [BookingController::class, 'create']);
@@ -30,6 +32,9 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('POST', '/book/payment', [BookingController::class, 'process']);
     $r->addRoute('POST', '/book/confirm', [BookingController::class, 'store']);  
     $r->addRoute(['GET', 'POST'], '/student/profile', [StudentProfileController::class, 'edit']);
+    $r->addRoute(['GET', 'POST'], '/admin/users/edit', [AdminController::class, 'editUser']); 
+    $r->addRoute('GET', '/admin/statistics', [AdminController::class, 'statistics']); 
+        
 });
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];

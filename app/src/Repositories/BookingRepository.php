@@ -51,4 +51,22 @@ class BookingRepository extends Repository
         $stmt = $this->db->prepare("UPDATE bookings SET status = :status WHERE id = :id");
         return $stmt->execute(['status' => $status, 'id' => $bookingId]);
     }
+
+    public function getStatistics(): array
+    {
+        $totalBookings = $this->db->query("SELECT COUNT(*) FROM bookings")->fetchColumn();
+        
+        $earningsSql = "
+            SELECT SUM(t.hourly_rate) 
+            FROM bookings b 
+            JOIN tutor_profiles t ON b.tutor_id = t.user_id 
+            WHERE b.status = 'confirmed'
+        ";
+        $totalEarnings = $this->db->query($earningsSql)->fetchColumn();
+
+        return [
+            'total_bookings' => $totalBookings,
+            'total_earnings' => $totalEarnings ?: 0
+        ];
+    }
 }

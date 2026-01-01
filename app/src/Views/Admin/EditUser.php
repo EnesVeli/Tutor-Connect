@@ -1,0 +1,42 @@
+<?php 
+$title = 'Edit User';
+require __DIR__ . '/../partials/header.php';
+require __DIR__ . '/../partials/navbar.php';
+?>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4>Edit User #<?= $user->id ?></h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control"
+                                value="<?= htmlspecialchars($user->first_name) ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control"
+                                value="<?= htmlspecialchars($user->last_name) ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control"
+                                value="<?= htmlspecialchars($user->email) ?>" required>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php require __DIR__ . '/../partials/footer.php'; ?>

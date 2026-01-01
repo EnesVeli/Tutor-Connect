@@ -48,7 +48,6 @@
                                         $age = $now->diff($dob)->y;
                                         echo "<div class='small text-muted'>$age Years Old</div>";
                                     } catch (Exception $e) {
-                                        // Invalid date format, do nothing
                                     }
                                 ?>
                                 <?php endif; ?>

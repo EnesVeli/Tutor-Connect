@@ -2,105 +2,91 @@
 
 namespace App\Controllers;
 
-use App\Repositories\BookingRepository;
-use App\Repositories\TutorRepository;
+use App\Framework\Controller;
+use App\Services\BookingService;
 
-class BookingController
+class BookingController extends Controller
 {
+    private BookingService $bookingService;
+
+    public function __construct()
+    {
+        $this->bookingService = new BookingService();
+    }
+
     public function create()
     {
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'student') {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth('student');
 
         $tutorId = $_GET['tutor_id'] ?? null;
-        if (!$tutorId) {
-            die("Tutor ID is required.");
-        }
+        if (!$tutorId) die("Tutor ID is required.");
 
-        $tutorRepo = new TutorRepository();
-        $tutorProfile = $tutorRepo->findByUserId((int)$tutorId);
+        $data = $this->bookingService->getBookingFormDetails((int)$tutorId);
 
-        if (!$tutorProfile) {
-            die("Tutor not found.");
-        }
+        if (!$data['tutorProfile']) die("Tutor not found.");
 
-        $userRepo = new \App\Repositories\UserRepository();
-        $tutorUser = $userRepo->findById((int)$tutorId);
-        $tutorName = $tutorUser ? ($tutorUser->first_name . ' ' . $tutorUser->last_name) : "Unknown Tutor";
-
-        require __DIR__ . '/../Views/Student/Book.php';
+        $this->view('Student/Book', [
+            'tutorName' => $data['tutorName'],
+            'tutorProfile' => $data['tutorProfile'],
+            'tutorId' => $tutorId
+        ]);
     }
-
     public function process()
     {
+        $this->requireAuth('student');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tutorId = $_POST['tutor_id'];
+            $date = $_POST['date'];
+            $time = $_POST['time'];
             $comment = $_POST['student_comment'];
-            $datePart = $_POST['date']; 
-            $timePart = $_POST['time'];
-            $scheduledAt = $datePart . ' ' . $timePart . ':00'; 
-            $date = date('l, F j, Y \a\t H:i', strtotime($scheduledAt));
-            $tutorRepo = new TutorRepository();
-            $tutor = $tutorRepo->findByUserId((int)$tutorId);
-            $tutorRate = $tutor->hourly_rate;
+            $paymentData = $this->bookingService->preparePayment((int)$tutorId, $date, $time);
 
-            $userRepo = new \App\Repositories\UserRepository(); 
-            $tutorUser = $userRepo->findById((int)$tutorId);
-            $tutorName = $tutorUser ? ($tutorUser->first_name . ' ' . $tutorUser->last_name) : "Unknown Tutor";
-            
-            require __DIR__ . '/../Views/Student/Payment.php';
+            $this->view('Student/Payment', array_merge($paymentData, [
+                'tutorId' => $tutorId,
+                'studentComment' => $comment,
+                'date' => $paymentData['prettyDate']
+            ]));
         }
     }
-
     public function store()
     {
+        $this->requireAuth('student');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $studentId = $_SESSION['user_id'];
             $tutorId = $_POST['tutor_id'];
             $scheduledAt = $_POST['scheduled_at'];
             $comment = $_POST['student_comment'];
 
-            $bookingRepo = new BookingRepository();
-            $success = $bookingRepo->create($studentId, $tutorId, $scheduledAt, $comment);
-
-            if ($success) {
-                require __DIR__ . '/../Views/Bookings/Success.php';
+            if ($this->bookingService->createBooking($studentId, $tutorId, $scheduledAt, $comment)) {
+                $this->view('Bookings/Success');
             } else {
                 echo "Error saving booking.";
             }
         }
     }
-    
+
     public function index()
     {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
-
-        $bookingRepo = new BookingRepository();
-        $bookings = $bookingRepo->findByUserId($_SESSION['user_id'], $_SESSION['user_role']);
-
-        require __DIR__ . '/../Views/Bookings/List.php';
+        $this->requireAuth(); 
+        
+        $bookings = $this->bookingService->getUserBookings($_SESSION['user_id'], $_SESSION['user_role']);
+        
+        $this->view('Bookings/List', ['bookings' => $bookings]);
     }
 
     public function update()
     {
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'tutor') {
-            die("Unauthorized");
-        }
+        $this->requireAuth('tutor');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $bookingId = $_POST['booking_id'];
-            $status = $_POST['status']; 
+            $status = $_POST['status'];
 
-            $bookingRepo = new BookingRepository();
-            $bookingRepo->updateStatus($bookingId, $status);
-
-            header('Location: /bookings');
-            exit;
+            $this->bookingService->updateBookingStatus($bookingId, $status);
+            
+            $this->redirect('/bookings');
         }
     }
 }
