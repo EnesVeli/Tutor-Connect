@@ -34,8 +34,9 @@ class AdminController extends Controller
             $fname = $_POST['first_name'];
             $lname = $_POST['last_name'];
             $email = $_POST['email'];
+            $bio   = $_POST['bio'] ?? '';
             
-            if ($this->adminService->updateUser($user->id, $fname, $lname, $email)) {
+            if ($this->adminService->updateUser($user->id, $fname, $lname, $email, $user->role, $bio)) {
                 $this->redirect('/admin/users');
             }
         }

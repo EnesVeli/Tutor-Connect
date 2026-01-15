@@ -28,6 +28,16 @@ require __DIR__ . '/../partials/navbar.php';
                             <input type="email" name="email" class="form-control"
                                 value="<?= htmlspecialchars($user->email) ?>" required>
                         </div>
+
+                        <?php if ($user->role !== 'admin'): ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-danger">Content Control (Bio)</label>
+                            <textarea name="bio" class="form-control"
+                                rows="4"><?= htmlspecialchars($user->bio ?? '') ?></textarea>
+                            <div class="form-text">Admins can edit or clear inappropriate content here.</div>
+                        </div>
+                        <?php endif; ?>
+
                         <div class="d-flex justify-content-between">
                             <a href="/admin/users" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-success">Save Changes</button>

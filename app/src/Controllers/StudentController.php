@@ -2,18 +2,29 @@
 
 namespace App\Controllers;
 
-use App\Repositories\TutorRepository;
+use App\Framework\Controller;
+use App\Services\TutorService;
 
-class StudentController
+class StudentController extends Controller
 {
-public function index()
-    {
-        $tutorRepo = new TutorRepository();
-        
-        $subject = $_GET['subject'] ?? null;
-        $price = !empty($_GET['price']) ? (float)$_GET['price'] : null;
-        $tutors = $tutorRepo->searchTutors($subject, $price);
+    private TutorService $tutorService;
 
-        require __DIR__ . '/../Views/Student/TutorList.php';
+    public function __construct()
+    {
+        $this->tutorService = new TutorService();
+    }
+    public function index()
+    {
+        $subject = $_GET['subject'] ?? null;
+        $minPrice = !empty($_GET['min_price']) ? (float)$_GET['min_price'] : null;
+        $maxPrice = !empty($_GET['max_price']) ? (float)$_GET['max_price'] : null;
+        $tutors = $this->tutorService->searchTutors($subject, $minPrice, $maxPrice);
+        
+        $this->view('Student/TutorList', [
+            'tutors' => $tutors,
+            'selectedSubject' => $subject,
+            'selectedMinPrice' => $minPrice,
+            'selectedMaxPrice' => $maxPrice
+        ]);
     }
 }

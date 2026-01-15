@@ -57,12 +57,9 @@ class UserRepository extends Repository
             return false;
         }
     }
-
-    // FIX: Using PDO::FETCH_OBJ to return objects
     public function findAllWithBio(): array
     {
-        $sql = "SELECT u.*, 
-                COALESCE(t.bio, s.bio, 'No bio') as bio 
+        $sql = "SELECT u.*, COALESCE(t.bio, s.bio, 'No bio') as bio 
                 FROM users u
                 LEFT JOIN tutor_profiles t ON u.id = t.user_id
                 LEFT JOIN student_profiles s ON u.id = s.user_id";
@@ -78,5 +75,31 @@ class UserRepository extends Repository
             'total_tutors' => $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'tutor'")->fetchColumn(),
             'total_students' => $this->db->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn(),
         ];
+    }
+    public function findByIdWithBio(int $id): ?object
+    {
+        $sql = "SELECT u.*, COALESCE(t.bio, s.bio, '') as bio 
+                FROM users u
+                LEFT JOIN tutor_profiles t ON u.id = t.user_id
+                LEFT JOIN student_profiles s ON u.id = s.user_id
+                WHERE u.id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_OBJ) ?: null;
+    }
+
+    public function updateBio(int $userId, string $role, ?string $bio): bool
+    {
+        if ($role === 'student') {
+            $sql = "UPDATE student_profiles SET bio = :bio WHERE user_id = :id";
+        } elseif ($role === 'tutor') {
+            $sql = "UPDATE tutor_profiles SET bio = :bio WHERE user_id = :id";
+        } else {
+            return true; // Admins don't have bios
+        }
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['bio' => $bio, 'id' => $userId]);
     }
 }

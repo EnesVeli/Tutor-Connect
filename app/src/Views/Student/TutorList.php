@@ -15,7 +15,7 @@ require __DIR__ . '/../partials/navbar.php';
             <div class="card p-3 bg-white shadow-sm">
                 <form method="GET" action="/tutors" class="row g-3">
 
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <label class="form-label fw-bold">Subject</label>
                         <select name="subject" class="form-select">
                             <option value="">All Subjects</option>
@@ -29,14 +29,28 @@ require __DIR__ . '/../partials/navbar.php';
                         </select>
                     </div>
 
-                    <div class="col-md-5">
-                        <label class="form-label fw-bold">Max Hourly Price (€)</label>
-                        <select name="price" class="form-select">
-                            <option value="">Any Price</option>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Min Price (€)</label>
+                        <select name="min_price" class="form-select">
+                            <option value="">€ 0</option>
                             <?php 
                             $prices = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
                             foreach($prices as $p) {
-                                $isSelected = (isset($selectedPrice) && (float)$selectedPrice == $p) ? 'selected' : '';
+                                $isSelected = (isset($selectedMinPrice) && (float)$selectedMinPrice == $p) ? 'selected' : '';
+                                echo "<option value='$p' $isSelected>€ $p</option>"; 
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Max Price (€)</label>
+                        <select name="max_price" class="form-select">
+                            <option value="">Any</option>
+                            <?php 
+                            $prices = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+                            foreach($prices as $p) {
+                                $isSelected = (isset($selectedMaxPrice) && (float)$selectedMaxPrice == $p) ? 'selected' : '';
                                 echo "<option value='$p' $isSelected>€ $p</option>"; 
                             }
                             ?>
@@ -83,5 +97,4 @@ require __DIR__ . '/../partials/navbar.php';
 </div>
 
 <?php 
-require __DIR__ . '/../partials/footer.php'; 
-?>
+require __DIR__ . '/../partials/footer.php'; ?>

@@ -22,12 +22,15 @@ class AdminService
 
     public function getUser(int $id)
     {
-        return $this->userRepo->findById($id);
+        return $this->userRepo->findByIdWithBio($id);
     }
 
-    public function updateUser(int $id, string $fname, string $lname, string $email): bool
+public function updateUser(int $id, string $fname, string $lname, string $email, string $role, ?string $bio): bool
     {
-        return $this->userRepo->update($id, $fname, $lname, $email);
+        $basicUpdate = $this->userRepo->update($id, $fname, $lname, $email);
+        $bioUpdate = $this->userRepo->updateBio($id, $role, $bio);
+
+        return $basicUpdate && $bioUpdate;
     }
 
     public function deleteUser(int $userId): bool

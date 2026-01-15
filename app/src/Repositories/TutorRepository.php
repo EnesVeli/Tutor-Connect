@@ -44,14 +44,7 @@ class TutorRepository extends Repository
             'end' => $end
         ]);
     }
-
-    public function getAllTutors(): array
-    {
-        $sql = "SELECT t.*, u.first_name, u.last_name, u.email FROM tutor_profiles t JOIN users u ON t.user_id = u.id";
-        return $this->db->query($sql)->fetchAll();
-    }
-
-    public function searchTutors(?string $subject, ?float $maxPrice): array
+    public function searchTutors(?string $subject, ?float $minPrice, ?float $maxPrice): array
     {
         $sql = "SELECT t.*, u.first_name, u.last_name, u.email 
                 FROM tutor_profiles t 
@@ -59,11 +52,18 @@ class TutorRepository extends Repository
                 WHERE 1=1";
         
         $params = [];
+        
         if (!empty($subject)) {
             $sql .= " AND t.subject LIKE :subject";
             $params['subject'] = "%$subject%";
         }
-        if (!empty($maxPrice)) {
+
+        if ($minPrice !== null) {
+            $sql .= " AND t.hourly_rate >= :min_price";
+            $params['min_price'] = $minPrice;
+        }
+
+        if ($maxPrice !== null) {
             $sql .= " AND t.hourly_rate <= :max_price";
             $params['max_price'] = $maxPrice;
         }
