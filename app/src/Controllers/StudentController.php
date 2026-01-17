@@ -19,7 +19,13 @@ class StudentController extends Controller
         $minPrice = !empty($_GET['min_price']) ? (float)$_GET['min_price'] : null;
         $maxPrice = !empty($_GET['max_price']) ? (float)$_GET['max_price'] : null;
         $tutors = $this->tutorService->searchTutors($subject, $minPrice, $maxPrice);
-        
+
+        if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
+            header('Content-Type: application/json');
+            echo json_encode($tutors);
+            exit;
+        }
+
         $this->view('Student/TutorList', [
             'tutors' => $tutors,
             'selectedSubject' => $subject,

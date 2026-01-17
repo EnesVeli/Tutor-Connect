@@ -65,11 +65,17 @@ require __DIR__ . '/../partials/navbar.php';
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="tutor-results">
         <?php foreach ($tutors as $tutor): ?>
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-header bg-white">
+            <div class="card h-100 shadow-sm position-relative">
+
+                <img src="https://ui-avatars.com/api/?name=<?= urlencode($tutor['first_name'] . '+' . $tutor['last_name']) ?>&background=random&size=64"
+                    alt="Profile picture of <?= htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']) ?>"
+                    class="rounded-circle position-absolute top-0 end-0 m-3 border border-white shadow-sm" width="50"
+                    height="50">
+
+                <div class="card-header bg-white pt-4">
                     <h5 class="mb-0"><?= htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']) ?></h5>
                     <small class="text-muted"><?= htmlspecialchars($tutor['subject']) ?></small>
                 </div>
@@ -82,7 +88,8 @@ require __DIR__ . '/../partials/navbar.php';
                     </div>
                 </div>
                 <div class="card-footer bg-white border-top-0">
-                    <a href="/book?tutor_id=<?= $tutor['user_id'] ?>" class="btn btn-primary w-100">Book Lesson</a>
+                    <a href="/book?tutor_id=<?= $tutor['profile_id'] ?? $tutor['user_id'] ?>"
+                        class="btn btn-primary w-100">Book Lesson</a>
                 </div>
             </div>
         </div>
@@ -96,5 +103,6 @@ require __DIR__ . '/../partials/navbar.php';
     </div>
 </div>
 
-<?php 
-require __DIR__ . '/../partials/footer.php'; ?>
+<script src="/assets/js/search.js"></script>
+
+<?php require __DIR__ . '/../partials/footer.php'; ?>

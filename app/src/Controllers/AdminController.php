@@ -30,6 +30,11 @@ class AdminController extends Controller
 
         $user = $this->adminService->getUser((int)$userId);
         
+        if (!$user) {
+            $this->redirect('/admin/users');
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fname = $_POST['first_name'];
             $lname = $_POST['last_name'];
@@ -53,7 +58,15 @@ class AdminController extends Controller
             $this->redirect('/admin/users');
         }
     }
-
+    public function deleteProfile()
+    {
+        $this->requireAuth('admin');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $profileId = $_POST['profile_id'] ?? 0;
+            $this->adminService->deleteTutorProfile((int)$profileId);
+            $this->redirect('/admin/users');
+        }
+    }
     public function statistics()
     {
         $this->requireAuth('admin');

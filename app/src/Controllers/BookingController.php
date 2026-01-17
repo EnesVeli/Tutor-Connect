@@ -18,17 +18,17 @@ class BookingController extends Controller
     {
         $this->requireAuth('student');
 
-        $tutorId = $_GET['tutor_id'] ?? null;
-        if (!$tutorId) die("Tutor ID is required.");
+        $profileId = $_GET['tutor_id'] ?? null;
+        if (!$profileId) die("Tutor ID is required.");
 
-        $data = $this->bookingService->getBookingFormDetails((int)$tutorId);
+        $data = $this->bookingService->getBookingFormDetails((int)$profileId);
 
         if (!$data['tutorProfile']) die("Tutor not found.");
 
         $this->view('Student/Book', [
             'tutorName' => $data['tutorName'],
             'tutorProfile' => $data['tutorProfile'],
-            'tutorId' => $tutorId
+            'tutorId' => $profileId
         ]);
     }
     public function process()
@@ -36,14 +36,14 @@ class BookingController extends Controller
         $this->requireAuth('student');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $tutorId = $_POST['tutor_id'];
+            $profileId = $_POST['tutor_id'];
             $date = $_POST['date'];
             $time = $_POST['time'];
             $comment = $_POST['student_comment'];
-            $paymentData = $this->bookingService->preparePayment((int)$tutorId, $date, $time);
+            $paymentData = $this->bookingService->preparePayment((int)$profileId, $date, $time);
 
             $this->view('Student/Payment', array_merge($paymentData, [
-                'tutorId' => $tutorId,
+                'tutorId' => $profileId,
                 'studentComment' => $comment,
                 'date' => $paymentData['prettyDate']
             ]));
@@ -55,14 +55,14 @@ class BookingController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $studentId = $_SESSION['user_id'];
-            $tutorId = $_POST['tutor_id'];
+            $profileId = $_POST['tutor_id'];
             $scheduledAt = $_POST['scheduled_at'];
             $comment = $_POST['student_comment'];
 
-            if ($this->bookingService->createBooking($studentId, $tutorId, $scheduledAt, $comment)) {
+            if ($this->bookingService->createBooking($studentId, (int)$profileId, $scheduledAt, $comment)) {
                 $this->view('Bookings/Success');
             } else {
-                echo "Error saving booking.";
+                echo "Error saving booking. Profile might not exist.";
             }
         }
     }

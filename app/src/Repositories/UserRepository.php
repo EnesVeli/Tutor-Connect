@@ -59,10 +59,13 @@ class UserRepository extends Repository
     }
     public function findAllWithBio(): array
     {
-        $sql = "SELECT u.*, COALESCE(t.bio, s.bio, 'No bio') as bio 
+        $sql = "SELECT u.*, COALESCE(t.bio, s.bio, 'No bio') as bio,
+                t.id as profile_id,
+                t.subject
                 FROM users u
                 LEFT JOIN tutor_profiles t ON u.id = t.user_id
-                LEFT JOIN student_profiles s ON u.id = s.user_id";
+                LEFT JOIN student_profiles s ON u.id = s.user_id
+                ORDER BY u.id DESC";
         
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -96,7 +99,7 @@ class UserRepository extends Repository
         } elseif ($role === 'tutor') {
             $sql = "UPDATE tutor_profiles SET bio = :bio WHERE user_id = :id";
         } else {
-            return true; // Admins don't have bios
+            return true; 
         }
 
         $stmt = $this->db->prepare($sql);

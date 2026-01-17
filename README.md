@@ -1,65 +1,28 @@
-# Docker template for PHP projects
-This repository provides a starting template for PHP application development.
+## Strickly followed the MVC structure
 
-It contains:
-* NGINX webserver
-* PHP FastCGI Process Manager with PDO MySQL support
-* MariaDB (GPL MySQL fork)
-* PHPMyAdmin
-* Composer
-* Composer package [nikic/fast-route](https://github.com/nikic/FastRoute) for routing
+You can login as a tutor. Create your profile select your subject that you teach, the days, your charge for that service, your years of experience (to show why the people who are being tutored to give you that money.), and your bio. You can view your schedule. In there it is shown to you the students name, their age and email, any messages thaat they left to you and the status, it is your choice to accept or decline the tutoring session.
 
-## Setup
+## Login Credentials
 
-1. Install Docker Desktop on Windows or Mac, or Docker Engine on Linux.
-1. Clone the project
+All accounts use the Password: password
 
-## Usage
+Examples:
+Role Email Password
+==================================
+Admin Admin@admin password
+Tutor Enes@gmail.com password
+Student bruh@gmail.com password
 
-In a terminal, from the cloned project folder, run:
-```bash
-docker compose up
-```
+You can always create any user with any email and password you want to use.
 
-### Composer Autoload
+## GDPR Compliance
 
-This template is configured to use Composer for PSR-4 autoloading:
+Data Minimization: We only store what is needed (Name, Email, Subject). We don't store real payment info.
+Right to Delete: The Admin can fully delete a user account and all their data permanently.
+Security: Passwords are hashed using password_hash
 
-- Namespace `App\\` is mapped to `app/src/`.
+## WCAG Compliance
 
-To install dependencies and generate the autoloader, run:
-
-```bash
-docker compose run --rm php composer install
-```
-
-If you add new classes or change namespaces, regenerate the autoloader:
-
-```bash
-docker compose run --rm php composer dump-autoload
-```
-
-Example usage is wired in `app/public/index.php` and a sample class exists at `app/src/hello.php`.
-
-### NGINX
-
-NGINX will now serve files in the app/public folder.
-
-Go to [http://localhost/hello.php](http://localhost/hello.php). You should see a hello world message.
-
-### PHPMyAdmin
-
-PHPMyAdmin provides basic database administration. It is accessible at [localhost:8080](localhost:8080).
-
-Credentials are defined in `docker-compose.yml`. They are: developer/secret123
-
-
-### Stopping the docker container
-
-If you want to stop the containers, press Ctrl+C. 
-
-Or run:
-```bash
-docker compose down
-```
-
+Alt Text: Tutor profile images in the search results include descriptive alt tags
+Forms: All inputs have associated labels.
+Contrast: Used standard Bootstrap colors for good readability.

@@ -38,4 +38,41 @@ require __DIR__ . '/../partials/navbar.php';
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Most Popular Tutors</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tutor Name</th>
+                            <th>Bookings Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($stats['tutors_list'] as $tutor): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($tutor->first_name . ' ' . $tutor->last_name) ?></td>
+                            <td>
+                                <span class="badge bg-primary rounded-pill">
+                                    <?= $tutor->booking_count ?>
+                                </span>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($stats['tutors_list'])): ?>
+                        <tr>
+                            <td colspan="2" class="text-center">No bookings yet.</td>
+                        </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <?php require __DIR__ . '/../partials/footer.php'; ?>

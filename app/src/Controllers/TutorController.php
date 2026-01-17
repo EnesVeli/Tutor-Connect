@@ -2,40 +2,49 @@
 
 namespace App\Controllers;
 
+use App\Framework\Controller;
 use App\Repositories\TutorRepository;
 
-class TutorController
+class TutorController extends Controller
 {
+    public function index()
+    {
+        $this->requireAuth('tutor');
+        $repo = new TutorRepository();
+        $profiles = $repo->findAllByUserId($_SESSION['user_id']);
+        
+        $this->view('Tutor/ProfileList', ['profiles' => $profiles]);
+    }
     public function edit()
     {
-        if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'tutor') {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireAuth('tutor');
+        $repo = new TutorRepository();
+        $profileId = $_GET['id'] ?? null;
+        $profile = null;
 
-        $tutorRepo = new TutorRepository();
-        $profile = $tutorRepo->findByUserId($_SESSION['user_id']);
-
-        $message = null;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $bio = $_POST['bio'] ?? '';
-            $subject = $_POST['subject'] ?? '';
-            $hourlyRate = (float) ($_POST['hourly_rate'] ?? 0);
-            $experience = (int) ($_POST['experience_years'] ?? 0);
-            
-            $start = $_POST['availability_start'] ?? '09:00';
-            $end = $_POST['availability_end'] ?? '17:00';
-
-            $success = $tutorRepo->save($_SESSION['user_id'], $bio, $hourlyRate, $experience, $subject, $start, $end);
-            
-            if ($success) {
-                $message = "Profile saved successfully!";
-                $profile = $tutorRepo->findByUserId($_SESSION['user_id']);
-            } else {
-                $message = "Error saving profile.";
+        if ($profileId) {
+            $profile = $repo->findById((int)$profileId);
+            if ($profile && $profile->user_id !== $_SESSION['user_id']) {
+                die("Unauthorized access to this profile.");
             }
         }
 
-        require __DIR__ . '/../Views/Tutor/Profile.php';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $subject = $_POST['subject'];
+            $rate = (float)$_POST['hourly_rate'];
+            $exp = (int)$_POST['experience_years'];
+            $bio = $_POST['bio'] ?? '';
+            $start = $_POST['availability_start'];
+            $end = $_POST['availability_end'];
+            
+            $days = isset($_POST['days']) ? implode(',', $_POST['days']) : '';
+
+            $repo->save($_SESSION['user_id'], $bio, $rate, $exp, $subject, $start, $end, $days, $profile ? $profile->id : null);
+            
+            $this->redirect('/profile'); 
+        }      
+        $this->view('Tutor/Profile', ['profile' => $profile]);
+
     }
 }

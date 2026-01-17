@@ -20,6 +20,7 @@ require __DIR__ . '/../Partials/navbar.php';
                             <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
+                            <th>Subject</th>
                             <th>Bio</th>
                             <th>Actions</th>
                         </tr>
@@ -37,19 +38,38 @@ require __DIR__ . '/../Partials/navbar.php';
                                 </span>
                             </td>
                             <td>
-                                <small
-                                    class="text-muted"><?= htmlspecialchars(substr($user->bio ?? '', 0, 50)) ?>...</small>
+                                <?php if (!empty($user->subject)): ?>
+                                <span class="badge bg-info text-dark"><?= htmlspecialchars($user->subject) ?></span>
+                                <?php else: ?>
+                                <span class="text-muted">-</span>
+                                <?php endif; ?>
                             </td>
                             <td>
-                                <a href="/admin/users/edit?id=<?= $user->id ?>"
-                                    class="btn btn-sm btn-outline-primary">Edit</a>
+                                <small
+                                    class="text-muted"><?= htmlspecialchars(substr($user->bio ?? '', 0, 30)) ?>...</small>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="/admin/users/edit?id=<?= $user->id ?>"
+                                        class="btn btn-sm btn-outline-primary">Edit</a>
 
-                                <form method="POST" action="/admin/users/delete"
-                                    onsubmit="return confirm('Are you sure? This will delete all their bookings!');"
-                                    style="display:inline;">
-                                    <input type="hidden" name="user_id" value="<?= $user->id ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </form>
+                                    <?php if (!empty($user->profile_id)): ?>
+                                    <form method="POST" action="/admin/profiles/delete"
+                                        onsubmit="return confirm('Delete this specific subject?');"
+                                        style="display:inline;">
+                                        <input type="hidden" name="profile_id" value="<?= $user->profile_id ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning"
+                                            title="Delete Subject Only">Delete Subject</button>
+                                    </form>
+                                    <?php endif; ?>
+
+                                    <form method="POST" action="/admin/users/delete"
+                                        onsubmit="return confirm('DANGER: This deletes the WHOLE ACCOUNT and ALL subjects!');"
+                                        style="display:inline;">
+                                        <input type="hidden" name="user_id" value="<?= $user->id ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            title="Delete Entire Account">Delete User</button>
+                                    </form>
                             </td>
                         </tr>
                         <?php endforeach; ?>
