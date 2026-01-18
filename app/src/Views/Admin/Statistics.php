@@ -1,7 +1,7 @@
 <?php 
 $title = 'Platform Statistics';
-require __DIR__ . '/../partials/header.php';
-require __DIR__ . '/../partials/navbar.php';
+require __DIR__ . '/../Partials/header.php';
+require __DIR__ . '/../Partials/navbar.php';
 ?>
 
 <div class="container mt-5">
@@ -75,4 +75,4 @@ require __DIR__ . '/../partials/navbar.php';
     </div>
 </div>
 </div>
-<?php require __DIR__ . '/../partials/footer.php'; ?>
+<?php require __DIR__ . '/../Partials/footer.php'; ?>

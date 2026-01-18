@@ -1,7 +1,7 @@
 <?php 
 $title = 'Secure Payment';
-require __DIR__ . '/../partials/header.php'; 
-require __DIR__ . '/../partials/navbar.php';
+require __DIR__ . '/../Partials/header.php'; 
+require __DIR__ . '/../Partials/navbar.php';
 
 $comment = $studentComment ?? $comment ?? ''; 
 $rate = $rate ?? 0;
@@ -47,4 +47,4 @@ $rate = $rate ?? 0;
     </div>
 </div>
 
-<?php require __DIR__ . '/../partials/footer.php'; ?>
+<?php require __DIR__ . '/../Partials/footer.php'; ?>

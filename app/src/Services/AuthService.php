@@ -18,6 +18,7 @@ class AuthService
         $user = $this->userRepo->findByEmail($email);
 
         if ($user && password_verify($password, $user->password)) {
+            session_regenerate_id(true);
             $_SESSION['user_id'] = $user->id;
             $_SESSION['user_name'] = $user->first_name;
             $_SESSION['user_role'] = $user->role;
